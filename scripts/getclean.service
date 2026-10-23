@@ -1,0 +1,11 @@
+[Unit]
+Description=getClean Downloads organizer
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/getclean
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

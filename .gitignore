@@ -1,1 +1,7 @@
+/target/
+/.cargo/
+/.rustup/
+/rustup-init.exe
+/rustup-init.exe.sha256
+/getClean-rust.zip
 *.exe
