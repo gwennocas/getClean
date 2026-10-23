@@ -37,12 +37,20 @@ jobs:
         run: |
           New-Item -ItemType Directory -Path dist/getclean/scripts -Force | Out-Null
           Copy-Item -Path @('target/release/getclean.exe', 'README.md', 'LICENSE') -Destination 'dist/getclean/'
-          Copy-Item -Path 'scripts/install-windows.ps1' -Destination 'dist/getclean/scripts/'
+          Copy-Item -Path @('scripts/install-windows.ps1', 'scripts/uninstall-windows.ps1') -Destination 'dist/getclean/scripts/'
           Compress-Archive -Path dist/getclean -DestinationPath "getclean-$env:GITHUB_REF_NAME-windows-x86_64.zip"
+      - name: Build Windows installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME.TrimStart('v')
+          ./scripts/build-windows-installer.ps1 -Version $version
       - uses: actions/upload-artifact@v4
         with:
           name: getclean-${{ matrix.platform }}
-          path: getclean-${{ github.ref_name }}-${{ matrix.platform }}.*
+          path: |
+            getclean-${{ github.ref_name }}-${{ matrix.platform }}.*
+            getclean-${{ github.ref_name }}-windows-x86_64-setup.exe
           if-no-files-found: error
 
   publish:
@@ -63,14 +71,15 @@ jobs:
         shell: bash
         run: |
           cat > release-notes.md <<'EOF'
-          Primeira versão do getClean reescrita em Rust.
+          getClean em Rust, agora com instalador para Windows.
 
           - Organiza Downloads nas pastas do sistema (Documents, Pictures, Videos e Music).
           - Separa PDFs em Documents/pdf e mantém Archives e Programs em Documents.
           - Inclui histórico, `--undo` e proteção contra nomes repetidos.
-          - Pode rodar continuamente com os instaladores incluídos em cada pacote.
+          - O instalador Windows configura a inicialização automática e oferece desinstalação pelo sistema.
+          - Os pacotes portáteis continuam disponíveis para Windows e Linux.
 
-          Baixe o pacote da sua plataforma, extraia e consulte o README.md. Não é necessário instalar Rust para usar esses binários.
+          No Windows, baixe o arquivo `-setup.exe` e execute-o. Para uso portátil, baixe o ZIP ou o TAR.GZ da sua plataforma. Não é necessário instalar Rust.
           EOF
           gh release create "$GITHUB_REF_NAME" dist/* \
             --verify-tag \
