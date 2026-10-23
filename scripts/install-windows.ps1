@@ -1,9 +1,17 @@
 param(
-    [string] $BinaryPath = (Join-Path $PSScriptRoot '..\target\release\getclean.exe'),
+    [string] $BinaryPath,
     [string] $Downloads
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $BinaryPath) {
+    $releaseBinary = Join-Path $PSScriptRoot '..\getclean.exe'
+    if (Test-Path -LiteralPath $releaseBinary) {
+        $BinaryPath = $releaseBinary
+    } else {
+        $BinaryPath = Join-Path $PSScriptRoot '..\target\release\getclean.exe'
+    }
+}
 $binary = (Resolve-Path -LiteralPath $BinaryPath).Path
 $installDir = Join-Path $env:LOCALAPPDATA 'getClean'
 $installedBinary = Join-Path $installDir 'getclean.exe'

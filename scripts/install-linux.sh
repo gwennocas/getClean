@@ -2,8 +2,13 @@
 set -eu
 
 cd "$(dirname "$0")/.."
-cargo build --release
-install -Dm755 target/release/getclean "$HOME/.local/bin/getclean"
+if [ -f ./getclean ]; then
+    binary=./getclean
+else
+    cargo build --release
+    binary=target/release/getclean
+fi
+install -Dm755 "$binary" "$HOME/.local/bin/getclean"
 install -Dm644 scripts/getclean.service "$HOME/.config/systemd/user/getclean.service"
 systemctl --user daemon-reload
 systemctl --user enable --now getclean.service

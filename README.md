@@ -17,7 +17,7 @@ Por exemplo, `Downloads/relatorio.PDF` vai para `Documents/pdf/relatorio.PDF`. A
 
 ## Uso
 
-Instale o [Rust](https://rustup.rs/) e execute:
+Baixe o pacote para Windows ou Linux na [página de releases](https://github.com/gwennocas/getClean/releases), extraia e execute `getclean.exe` ou `getclean`. Os pacotes incluem os instaladores de execução contínua em `scripts/` e não exigem Rust. Para compilar a partir do código, instale o [Rust](https://rustup.rs/) e execute:
 
 ```sh
 cargo run --release
@@ -42,11 +42,11 @@ cargo run --release -- --interval 15 --settle 20
 
 ### Linux
 
-Rode `sh scripts/install-linux.sh`. O script compila em modo release, instala em `~/.local/bin` e ativa um serviço de usuário do systemd com reinício automático. Veja o estado com `systemctl --user status getclean`. Para continuar rodando depois de sair da sessão, um administrador pode ativar `sudo loginctl enable-linger "$USER"`. Para remover, execute `systemctl --user disable --now getclean`.
+Rode `sh scripts/install-linux.sh`. O script usa o binário do pacote da release, ou compila em modo release se você estiver no código-fonte, instala em `~/.local/bin` e ativa um serviço de usuário do systemd com reinício automático. Veja o estado com `systemctl --user status getclean`. Para continuar rodando depois de sair da sessão, um administrador pode ativar `sudo loginctl enable-linger "$USER"`. Para remover, execute `systemctl --user disable --now getclean`.
 
 ### Windows
 
-Rode `cargo build --release` e depois `powershell -ExecutionPolicy Bypass -File scripts/install-windows.ps1`. Se o build reclamar da ausência de `link.exe`, use `rustup toolchain install stable-gnu` e `cargo +stable-gnu build --release`. Isso cria uma Tarefa Agendada para o usuário atual, inicia imediatamente e volta a iniciar ao entrar na sessão. A tarefa não tem limite de duração e tenta reiniciar se o programa falhar. Veja com `Get-ScheduledTask -TaskName getClean` e remova com `Unregister-ScheduledTask -TaskName getClean -Confirm:$false`.
+No pacote da release, rode `powershell -ExecutionPolicy Bypass -File scripts/install-windows.ps1`. Se estiver no código-fonte, rode `cargo build --release` antes. Se o build reclamar da ausência de `link.exe`, use `rustup toolchain install stable-gnu` e `cargo +stable-gnu build --release`. Isso cria uma Tarefa Agendada para o usuário atual, inicia imediatamente e volta a iniciar ao entrar na sessão. A tarefa não tem limite de duração e tenta reiniciar se o programa falhar. Veja com `Get-ScheduledTask -TaskName getClean` e remova com `Unregister-ScheduledTask -TaskName getClean -Confirm:$false`.
 
 Para usar outra pasta de origem, passe `-Downloads 'D:\Downloads'` ao instalador. O instalador copia o executável para `%LOCALAPPDATA%\getClean\getclean.exe`, de modo que a tarefa continue funcionando mesmo se o repositório for movido.
 
